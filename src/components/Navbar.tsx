@@ -22,6 +22,12 @@ export default function Navbar() {
           className='w-6 m-8'
         />
         <Link
+          href='/'
+          className='m-4'
+        >
+          Home
+        </Link>
+        <Link
           href='/sign-up'
           className='m-4'
         >
