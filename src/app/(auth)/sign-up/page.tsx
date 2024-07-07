@@ -30,7 +30,7 @@ export default function Page() {
               id='email'
               type='email'
               name='email'
-              placeholder='My name'
+              placeholder='John Smith'
               className='p-4'
               required
             />
