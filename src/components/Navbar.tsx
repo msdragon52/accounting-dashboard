@@ -37,9 +37,8 @@ export default function Navbar() {
     <nav className='p-8 w-[15rem] text-white bg-blue-500 border-r border-white'>
       <ul className='flex flex-col items-center justify-center'>
         {navLinks.map(({ label, ref }, index) => (
-          <>
+          <div key={index}>
             <Link
-              key={index}
               className='m-4 hover:underline'
               href={`/${ref}`}
             >
@@ -51,7 +50,7 @@ export default function Navbar() {
                 className='w-6 m-8'
               />
             )}
-          </>
+          </div>
         ))}
       </ul>
     </nav>
