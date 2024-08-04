@@ -1,0 +1,90 @@
+datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model User {
+    id            String   @id @default(auto()) @map("_id") @db.ObjectId
+    email         String   @unique
+    emailVerified Boolean
+    password      String
+    salt          String
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+}
+
+model Inventory {
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    sku         String
+    description String
+    price       Float
+    quantity    Float
+    Batch       Batch    @relation(fields: [batchId], references: [id])
+    batchId     String   @db.ObjectId
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+model Batch {
+    id          String      @id @default(auto()) @map("_id") @db.ObjectId
+    vendor      String
+    deliveredAt DateTime    @default(now())
+    Inventory   Inventory[]
+}
+
+model Ingredient {
+    id       String @id @default(auto()) @map("_id") @db.ObjectId
+    name     String
+    quantity Float
+    Recipe   Recipe @relation(fields: [recipeId], references: [id])
+    recipeId String @db.ObjectId
+}
+
+model Recipe {
+    id         String       @id @default(auto()) @map("_id") @db.ObjectId
+    name       String
+    Ingredient Ingredient[]
+    price      Float
+    Order      Order?       @relation(fields: [orderId], references: [id])
+    orderId    String?      @db.ObjectId
+}
+
+model Resale {
+    id       String  @id @default(auto()) @map("_id") @db.ObjectId
+    name     String
+    price    Float
+    quantity Float
+    Order    Order?  @relation(fields: [orderId], references: [id])
+    orderId  String? @db.ObjectId
+}
+
+model SalesTaxByState {
+    id    String @id @default(auto()) @map("_id") @db.ObjectId
+    state String
+    tax   Float
+}
+
+model Order {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    Recipe    Recipe[]
+    Resale    Resale[]
+    total     Float
+    tax       Float
+    tip       Float
+    delivery  Boolean
+    address   String?
+    loyaltyId String
+    paymentAt DateTime
+}
+
+model Revenue {
+    id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model Treasury {
+    id String @id @default(auto()) @map("_id") @db.ObjectId
+}
