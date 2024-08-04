@@ -4,8 +4,39 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useRouter } from 'next/navigation';
+import { useFormState, useFormStatus } from 'react-dom';
+import { register } from '@/lib/auth/actions';
+import { Loader2 } from 'lucide-react';
+
+function Submit() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      variant='outline'
+      className='text-md uppercase'
+      type='submit'
+      disabled={pending}
+    >
+      {pending ? (
+        <Loader2 className='h-8 w-8 animate-spin' />
+      ) : (
+        'Create Account'
+      )}
+    </Button>
+  );
+}
 
 export default function Page() {
+  const [state, formAction] = useFormState(register, undefined);
+  const router = useRouter();
+
+  if (state?.message === 'SUCCESS') {
+    router.refresh();
+    router.push('/login');
+  }
+
   return (
     <div className='bg-gradient-to-b from-blue-500 to-green-300 h-screen flex flex-col justify-center items-center p-32'>
       <h1 className='text-3xl'>Sign Up</h1>
@@ -17,19 +48,27 @@ export default function Page() {
           Already have an account? Sign in &rarr;
         </Button>
       </Link>
-      <form>
+      {state?.message !== 'SUCCESS' ? (
+        <p className='text-sm text-red-500'>{state?.message}</p>
+      ) : (
+        ''
+      )}
+      <form action={formAction}>
         <div className='mt-2 grid grid-cols-2 gap-2'>
           <div className='gap-4 m-4'>
             <Label
               className='text-lg'
-              htmlFor='email'
+              htmlFor='name'
             >
               Name:
             </Label>
+            {state?.errors?.name && (
+              <p className='text-sm text-red-500'>{state.errors.name}</p>
+            )}
             <Input
-              id='email'
-              type='email'
-              name='email'
+              id='name'
+              type='name'
+              name='name'
               placeholder='John Smith'
               className='p-4'
               required
@@ -58,10 +97,13 @@ export default function Page() {
             >
               Password:
             </Label>
+            {state?.errors?.password && (
+              <p className='text-sm text-red-500'>{state.errors.password}</p>
+            )}
             <Input
-              id='email'
-              type='email'
-              name='email'
+              id='password'
+              type='password'
+              name='password'
               placeholder='Password'
               className='p-4'
               required
@@ -70,14 +112,19 @@ export default function Page() {
           <div className='gap-4 m-4'>
             <Label
               className='text-lg'
-              htmlFor='password'
+              htmlFor='confirmPassword'
             >
               Confirm Password:
             </Label>
+            {state?.errors?.confirmPassword && (
+              <p className='text-sm text-red-500'>
+                {state.errors.confirmPassword}
+              </p>
+            )}
             <Input
-              id='password'
+              id='confirmPassword'
               type='password'
-              name='password'
+              name='confirmPassword'
               placeholder='Confirm Password'
               className='p-4'
               required
@@ -85,13 +132,7 @@ export default function Page() {
           </div>
         </div>
         <div className='flex flex-col items-center justify-center m-8'>
-          <Button
-            variant='secondary'
-            type='submit'
-            className='text-md uppercase'
-          >
-            Create Account
-          </Button>
+          <Submit />
         </div>
       </form>
     </div>
