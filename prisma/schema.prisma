@@ -79,6 +79,7 @@ model Order {
     address   String?
     loyaltyId String
     paymentAt DateTime
+    discount  Float
 }
 
 model Revenue {
